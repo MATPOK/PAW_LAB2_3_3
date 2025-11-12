@@ -17,6 +17,7 @@ h1 {
 }
 
 button {
+    margin: 10px;
     background-color: #008CBA;
     color: white;
     padding: 12px 24px;
