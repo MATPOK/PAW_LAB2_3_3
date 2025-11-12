@@ -1,79 +1,54 @@
-const searchForm = document.getElementById('search-form');
-const capitalInput = document.getElementById('capital-input');
-const resultsBody = document.getElementById('countries-tbody');
-const errorMessageEl = document.getElementById('error-message');
 
-searchForm.addEventListener('submit', handleSearch);
 
-async function handleSearch(event) {
-    event.preventDefault();
+const fetchButton = document.getElementById('getRandomGifButton');
+const gifContainer = document.getElementById('gifContainer');
+const errorContainer = document.getElementById('errorContainer');
 
-    const capitalName = capitalInput.value.trim();
+const API_KEY ='l8t9EivkrWkL61e3YVgC2MslC6FITWAh'; //Klucz kolegi, ponieważ na moim koncie nie działa
+const API_URL = `https://api.giphy.com/v1/gifs/random?api_key=${API_KEY}&tag=g`;
 
-    resultsBody.innerHTML = '';
-    errorMessageEl.textContent = '';
-
-    if (!capitalName) {
-        errorMessageEl.textContent = 'Proszę wpisać nazwę stolicy.';
-        return;
-    }
-
-    const API_URL = `https://restcountries.com/v3.1/capital/${capitalName}`;
+async function fetchRandomGif() {
+    
+    gifContainer.innerHTML = '';
+    errorContainer.textContent = '';
+    
+    gifContainer.textContent = 'Ładowanie...';
 
     try {
         const response = await fetch(API_URL);
 
         if (!response.ok) {
-            if (response.status === 404) {
-                errorMessageEl.textContent = 'Nie znaleziono kraju dla podanej stolicy.';
-            } else {
-                errorMessageEl.textContent = `Wystąpił błąd: ${response.status} ${response.statusText}`;
-            }
-            return;
+            throw new Error(`Błąd API: ${response.status} ${response.statusText}`);
         }
 
         const data = await response.json();
+        const gifUrl = data.data.images.original.url;
 
-        renderCountries(data, capitalName);
+        if (!gifUrl) {
+             throw new Error('Nie znaleziono adresu URL GIF-a w odpowiedzi API.');
+        }
+
+        displayGif(gifUrl);
 
     } catch (error) {
-        console.error('Błąd pobierania danych:', error);
-
-        let message = 'Wystąpił nieznany błąd.';
-        if (error instanceof Error) {
-            message = `Błąd sieci lub połączenia: ${error.message}`;
-        }
-        errorMessageEl.textContent = message;
+        console.error('Wystąpił błąd:', error);
+        displayError(`Nie udało się załadować GIF-a. (${error.message})`);
     }
 }
 
-function renderCountries(countries, query) {
-    resultsBody.innerHTML = '';
-
-    if (countries.length === 0) {
-        errorMessageEl.textContent = 'Brak danych do wyświetlenia.';
-        return;
-    }
-
-    const regex = new RegExp(query, 'gi');
-
-    countries.forEach(country => {
-        const row = document.createElement('tr');
-
-        const capitalName = country.capital?.[0] ?? 'Brak';
-        const subregionName = country.subregion ?? 'Brak';
-        const populationFormatted = country.population.toLocaleString('pl-PL');
-
-        const highlightedCapital = capitalName.replace(regex, '<span class="highlight">$&</span>');
-
-        row.innerHTML = `
-            <td>${country.name.common}</td>
-            <td>${highlightedCapital}</td>
-            <td>${populationFormatted}</td>
-            <td>${country.region}</td>
-            <td>${subregionName}</td>
-        `;
-
-        resultsBody.appendChild(row);
-    });
+function displayGif(url) {
+    gifContainer.innerHTML = '';
+    
+    const img = document.createElement('img');
+    img.src = url;
+    img.alt = 'Losowy GIF z GIPHY';
+    
+    gifContainer.appendChild(img);
 }
+
+function displayError(message) {
+    gifContainer.innerHTML = '';
+    errorContainer.textContent = message;
+}
+
+fetchButton.addEventListener('click', fetchRandomGif);

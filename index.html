@@ -3,35 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wyszukiwarka Krajów po Stolicach</title>
+    <title>Losowy GIF z GIPHY</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <main>
-        <h1>Wyszukiwarka Krajów po Stolicach</h1>
 
-        <form id="search-form">
-            <label for="capital-input">Wpisz nazwę stolicy:</label>
-            <input type="text" id="capital-input" placeholder="np. Warsaw">
-            <button type="submit">Wyszukaj</button>
-        </form>
+    <h1>Generator Losowych GIF-ów</h1>
+    <button id="getRandomGifButton">Pokaż losowy GIF</button>
+    
+    <div id="gifContainer">
+        Kliknij przycisk, aby załadować GIF-a!
+    </div>
 
-        <p id="error-message" class="error"></p>
+    <div id="errorContainer"></div>
 
-        <table id="countries-table">
-            <thead>
-                <tr>
-                    <th>Country</th>
-                    <th>Capital</th>
-                    <th>Population</th>
-                    <th>Region</th>
-                    <th>Subregion</th>
-                </tr>
-            </thead>
-            <tbody id="countries-tbody"></tbody>
-        </table>
-    </main>
-
-    <script src="app.js" defer></script>
+    <script src="app.js"></script>
 </body>
 </html>
